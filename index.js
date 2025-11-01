@@ -1,7 +1,12 @@
 require("./instrumentation");
 const express = require("express");
 const bodyParser = require("body-parser");
+const winston = require("winston");
+
 const { trace, span, metrics } = require("@opentelemetry/api");
+
+ const logger = winston.createLogger()
+
 
 const tracer = trace.getTracer("todo-app-tracer", "1.0.0");
  const meter= metrics.getMeter("todo-app-meter", "1.0.0");
@@ -21,7 +26,8 @@ let todos = [];
  });
 // GET all todos
 app.get("/todos", (req, res) => {
-  return tracer.startActiveSpan("get-all-todos", (span) => {
+    return tracer.startActiveSpan("get-all-todos", (span) => {
+      
       span.setAttribute("User-name", "Test-User");
       counter.add(1, { route: "/todos", method: "GET" });
     res.json(todos);
@@ -79,5 +85,6 @@ app.delete("/todos/:id", (req, res) => {
 });
 
 app.listen(port, () => {
-  console.log(`Todo app listening at http://localhost:${port}`);
+    //console.log(`Todo app listening at http://localhost:${port}`);
+     logger.info(`Todo app started on port ${port}`);
 });

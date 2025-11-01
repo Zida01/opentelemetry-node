@@ -4,8 +4,9 @@ const { PeriodicExportingMetricReader, ConsoleMetricExporter } = require("@opent
 const { getNodeAutoInstrumentations } = require("@opentelemetry/auto-instrumentations-node");
 const { ATTR_SERVICE_NAME, ATTR_SERVICE_VERSION } = require("@opentelemetry/semantic-conventions");
 const { resourceFromAttributes} = require("@opentelemetry/resources");
+const { SimpleLogRecordProcessor, ConsoleLogRecordExporter} = require("@opentelemetry/sdk-logs");
 
-
+ 
 const sdk = new NodeSDK({
     // define resources
     resource: resourceFromAttributes({
@@ -16,6 +17,7 @@ const sdk = new NodeSDK({
   metricReader: new PeriodicExportingMetricReader({
     exporter: new ConsoleMetricExporter(),
   }),
+  logRecordProcessors:[new SimpleLogRecordProcessor(new ConsoleLogRecordExporter())],
   instrumentations:[getNodeAutoInstrumentations()],
 });
 
